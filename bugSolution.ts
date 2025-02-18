@@ -1,0 +1,52 @@
+function compareObjects(obj1: any, obj2: any): boolean {
+  // Check if the objects are the same object
+  if (obj1 === obj2) {
+    return true;
+  }
+
+  // Check if the objects are of different types
+  if (typeof obj1 !== typeof obj2) {
+    return false;
+  }
+
+  // Check if the objects are null or undefined
+  if (obj1 === null || obj2 === null || obj1 === undefined || obj2 === undefined) {
+    return obj1 === obj2; // Return true if both are null or undefined
+  }
+
+  // Check if the objects are arrays
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    if (obj1.length !== obj2.length) {
+      return false;
+    }
+    for (let i = 0; i < obj1.length; i++) {
+      if (!compareObjects(obj1[i], obj2[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Check if the objects are objects
+  if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+
+    for (const key of keys1) {
+      //Check if the values are functions and compare the function bodies as strings. This isn't a perfect solution and might fail for closures etc.
+      if(typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
+        if(obj1[key].toString() !== obj2[key].toString()) return false;
+      } else if (!compareObjects(obj1[key], obj2[key])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // Check if the objects are primitives
+  return obj1 === obj2;
+}
